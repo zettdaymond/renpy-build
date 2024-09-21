@@ -9,6 +9,9 @@ def unpack(c):
 
     c.var("version", version)
     c.run("tar xzf {{source}}/libffi-{{version}}.tar.gz")
+    
+    c.chdir("libffi-{{version}}")
+    c.patch("libffi_wsl.diff")
 
 
 @task()

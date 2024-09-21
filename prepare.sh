@@ -7,56 +7,34 @@ ROOT=$(cd $(dirname $0); pwd)
 REFS=$ROOT
 BASE="$ROOT"
 
-# Needed to build things.
-sudo apt-get install -y git build-essential ccache python-dev-is-python2 python3-dev unzip
+zypper install python
 
-# Needed to install python2 pip
-sudo apt-get install -y curl
+zypper install autoconf autoconf-archive automake make clang llvm
+zypper install python3-devel python3-pip
 
-# Needed by renpy-build itself.
-sudo apt-get install -y python3-jinja2
+zypper install zlib zlib-devel bzip2 bzip2-devel  xz xz-devel
+zypper install libopenssl libopenssl-devel libffi libffi-devel
 
-# Needed by sysroot.
-sudo apt-get install -y debootstrap qemu-user-static
+zypper install libpng libpng-devel libjpeg libjpeg-devel libwebp libwebp-devel libyuv libyuv-devel
 
-# Needed by gcc.
-sudo apt-get install -y libgmp-dev libmpfr-dev libmpc-dev
+zypper install fribidi fribidi-devel freetype freetype-devel harfbuzz harfbuzz-devel
+zypper install ffmpeg ffmpeg-devel
 
-# Needed by hostpython.
-sudo apt-get install -y libssl-dev libbz2-dev
+pip install virtualenv
 
-# Needed for windows.
-sudo apt-get install -y mingw-w64 autoconf
+zypper install python3-jinja2
 
-# Needed for mac
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cmake clang libxml2-dev llvm
+zypper install SDL2-devel SDL2_mixer-devel SDL2_image-devel SDL2_ttf-devel
 
-# Needed for iOS
-wget https://apt.llvm.org/llvm.sh
-chmod +x llvm.sh
-sudo ./llvm.sh 13
+zypper install bc libtool
 
-# Needed for web
-sudo apt-get install -y quilt
+zypper install libxkbcommon-devel wayland-egl-devel wayland-devel wayland-protocols-devel pulseaudio-devel 
+zypper install mesa-llvmpipe-libGLESv2-devel mesa-llvmpipe-libEGL-devel
 
-# Install the standard set of packages needed to build Ren'Py.
-sudo apt-get install -y \
-    python-dev-is-python2 libavcodec-dev libavformat-dev \
-    libavresample-dev libswresample-dev libswscale-dev libfreetype6-dev libglew1.6-dev \
-    libfribidi-dev libsdl2-dev libsdl2-image-dev libsdl2-gfx-dev \
-    libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-turbo8-dev
+zypper install libaudioresource-devel glib2-devel dbus-devel 
 
-# Unpack clang.
-sudo tar xzf "$BASE/prebuilt/clang_rt.tar.gz" -C /usr/lib/clang/10/lib/
-
-mkdir -p "$BASE/tmp"
-
-GET_PIP="$ROOT/tmp/get-pip.py"
-
-if [ ! -e $GET_PIP ]; then
-    curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o $GET_PIP
-    sudo python2 $GET_PIP
-fi
+curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+python2 get-pip.py
 
 pip2 install virtualenv
 
@@ -64,8 +42,8 @@ pip2 install virtualenv
 
 VENV="$ROOT/tmp/virtualenv.py2"
 
-export RENPY_DEPS_INSTALL=/usr::/usr/lib/x86_64-linux-gnu/
+export RENPY_DEPS_INSTALL=/usr::/usr/lib/
 
-. $BASE/nightly/git.sh
+# . $BASE/nightly/git.sh
 . $BASE/nightly/python.sh
 

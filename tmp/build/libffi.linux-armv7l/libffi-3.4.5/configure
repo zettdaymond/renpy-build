@@ -1,0 +1,1 @@
+      test -f $srcdir/confdefs.h   && cp $srcdir/confdefs.h   .

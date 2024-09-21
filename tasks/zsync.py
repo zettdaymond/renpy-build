@@ -10,7 +10,6 @@ def unpack(c):
     c.var("version", version)
     c.run("tar xjf {{source}}/zsync-{{version}}.tar.bz2")
 
-
 @task(kind="python", platforms="linux,mac")
 def build(c):
 

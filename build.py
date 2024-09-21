@@ -4,6 +4,7 @@ import sys
 import argparse
 import shutil
 from pathlib import Path
+import ctypes
 
 sys.path.insert(1, Path(__file__).parent / 'deps')
 

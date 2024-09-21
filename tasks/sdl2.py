@@ -1,113 +1,52 @@
-from renpybuild.model import task, annotator
+from renpybuild.context import Context
+from renpybuild.task import task, annotator
 import shutil
+import os
 
-version = "2.0.14"
+version = "2.0.30"
 
 
 @annotator
-def annotate(c):
-    c.include("{{ install }}/include/SDL2")
+def annotate(c: Context):
+    if c.name != "sdl2":
+        c.include("{{ install }}/include/SDL2")
+
+
+def download(c : Context):
+    c.clean("{{ tmp }}/source/SDL2-{{version}}")
+    c.chdir("{{ tmp }}/source")
+
+    c.run("git clone --branch auroraos-sdl2 https://github.com/zettdaymond/SDL")
 
 
 @task()
-def unpack(c):
-
-    if not c.args.sdl:
-
-        c.clean()
-
-        c.var("version", version)
-        c.run("tar xzf {{source}}/SDL2-{{version}}.tar.gz")
-
-        c.chdir("SDL2-{{version}}")
-        c.patch("sdl2-dinput.diff")
-        c.patch("sdl2-no-android-hid.diff")
-        c.patch("sdl2-mac-fix-toggle-fullscreen.diff")
-        c.patch("sdl2-windows-ime.diff")
-        c.patch("sdl2-no-android-device-sizes.diff")
-        c.patch("sdl2-chromebook-mouse.diff")
-
-        if c.platform == "ios":
-            c.patch("sdl2-ios-configure.diff")
-            c.run("./autogen.sh")
-
-
-@task()
-def build(c):
+def build(c: Context):
     c.var("version", version)
-    c.chdir("SDL2-{{version}}")
 
-    if c.platform == "ios":
-        c.env("CFLAGS", "{{ CFLAGS }} -fobjc-arc")
+    c.run("""mkdir -p SDL2-{{version}}-build""")
 
-    c.env("ac_cv_header_libunwind_h", "no")
+    previous_libdir = c.get_env("PKG_CONFIG_LIBDIR")
+    previous_pkg_conf = c.get_env("PKG_CONFIG_LIBDIR")
+    c.env("PKG_CONFIG_LIBDIR", "/usr/lib/pkgconfig:{{ PKG_CONFIG_LIBDIR }}")
+    c.env("PKG_CONFIG", "pkg-config")
 
-    if not c.args.sdl:
-
-        c.run("""
-        ./configure {{ sdl_cross_config }}
-        --disable-shared
-        --prefix="{{ install }}"
-
-        --disable-wasapi
-        --disable-render-metal
-        --disable-jack
-
-    {% if c.platform == "android" %}
-        --disable-video-wayland
-        --disable-video-x11
-
-        --disable-oss
-        --disable-alsa
-        --disable-esd
-        --disable-pulseaudio
-        --disable-arts
-        --disable-nas
-        --disable-sndio
-        --disable-fusionsound
-    {% endif %}
-
+    c.run("""
+        cmake
+        -G Ninja
+        -S {{ tmp }}/source/SDL2-{{version}}
+        -B SDL2-{{version}}-build
+        -DCMAKE_INSTALL_PREFIX={{install}}
+        -DSDL_STATIC=ON
+        -DSDL_SHARED=OFF
         """)
 
-    if c.platform == "ios":
-        with open(c.path("include/SDL_config.h"), "a") as f:
-            f.write("""
-/* Enable system power support */
-#define SDL_POWER_UIKIT 1
+    c.env("PKG_CONFIG", previous_pkg_conf)
+    c.env("PKG_CONFIG_LIBDIR", previous_libdir)
 
-/* enable iPhone keyboard support */
-#define SDL_IPHONE_KEYBOARD 1
+    c.run("""
+          cmake
+          --build SDL2-{{version}}-build
+          --target install
+          """)
 
-/* enable iOS extended launch screen */
-#define SDL_IPHONE_LAUNCHSCREEN 1
-
-/* Set max recognized G-force from accelerometer
-   See src/joystick/uikit/SDL_sysjoystick.m for notes on why this is needed
- */
-#define SDL_IPHONE_MAX_GFORCE 5.0
-
-/* enable filesystem support */
-#define SDL_FILESYSTEM_COCOA   1
-
-/* Disable MFI */
-#undef SDL_JOYSTICK_MFI
-
-""")
-
-    c.run("""{{ make }}""")
-    c.run("""make install""")
-
-
-@task(kind="arch-python", platforms="android", archs="x86_64", always=True)
-def rapt(c):
-    c.var("version", version)
-    c.chdir("SDL2-{{version}}")
-
-#     c.run("""{{ CXX }} -std=c++11 -shared -o libhidapi.so src/hidapi/android/hid.cpp -llog""")
-#     c.run("""{{ STRIP }} --strip-unneeded libhidapi.so""")
-#
-#     c.run("""install -d {{ jniLibs }}""")
-#     c.run("""install libhidapi.so {{ jniLibs }}""")
-#     c.run("""install {{ cross }}/android-ndk-r21d/sources/cxx-stl/llvm-libc++/libs/{{ jni_arch }}/libc++_shared.so {{ jniLibs }}""")
-
-    c.copytree("android-project/app/src/main/java/org/libsdl", "{{ raptver }}/prototype/renpyandroid/src/main/java/org/libsdl")
+    c.chdir("SDL2-{{version}}-build")

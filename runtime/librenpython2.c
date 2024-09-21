@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include "Python.h"
 
+#ifdef AURORAOS
+#   include "AuroraIntegration.h"    
+#endif
+
 void init_librenpy(void);
 
 #ifdef MS_WINDOWS
@@ -282,6 +286,10 @@ static void set_python_io_encoding() {
  */
 int EXPORT renpython_main(int argc, char **argv) {
 
+#ifdef AURORAOS
+    struct AuroraIntegrationHandle* handle = AuroraIntergrationStartup();
+#endif
+
     set_python_io_encoding();
     set_renpy_platform();
     take_argv0(argv[0]);
@@ -291,13 +299,22 @@ int EXPORT renpython_main(int argc, char **argv) {
     Py_NoUserSiteDirectory = 1;
 
     init_librenpy();
-    return Py_Main(argc, argv);
+    int ret = Py_Main(argc, argv);
+
+#ifdef AURORAOS
+    AuroraIntergrationShutdown(handle);
+#endif
+    return ret;
 }
 
 /**
  * This is called from the launcher executable, to start Ren'Py running.
  */
 int EXPORT launcher_main(int argc, char **argv) {
+
+#ifdef AURORAOS
+    struct AuroraIntegrationHandle* handle = AuroraIntergrationStartup();
+#endif
 
     set_python_io_encoding();
     set_renpy_platform();
@@ -357,6 +374,12 @@ int EXPORT launcher_main(int argc, char **argv) {
     Py_NoUserSiteDirectory = 1;
 
     init_librenpy();
-    return Py_Main(argc + 1, new_argv);
+    int ret = Py_Main(argc + 1, new_argv);
+
+#ifdef AURORAOS
+    AuroraIntergrationShutdown(handle);
+#endif
+
+    return ret;
 }
 

@@ -13,7 +13,8 @@ def build(c):
     c.run("""
     {{ CC }} {{ CFLAGS }}
 
-    -DPLATFORM=\\"{{ c.platform }}\\" -DARCH=\\"{{ c.arch }}\\" -D{{ c.platform|upper }}
+    -DPLATFORM=\\"{{ c.platform }}\\" -DARCH=\\"{{ c.arch }}\\" -D{{ c.platform|upper }} 
+    -DAURORAOS=1
 
     -c -o librenpython.o
     {{ runtime }}/librenpython{{ c.python }}.c
@@ -52,6 +53,8 @@ def link_linux(c):
     -lswscale
     -lswresample
     -lavutil
+          
+    -lauroraintegration
 
     -lSDL2_image
     -lSDL2
@@ -70,6 +73,10 @@ def link_linux(c):
     -lz
     -lpthread
     -lm
+          
+    -ldbus-1
+    -lwayland-client
+    -laudioresource    
     """)
 
     c.run("""

@@ -181,7 +181,6 @@ reprlib/
 socketserver/
 winreg/
 
-android
 jnius/
 pyobjus/
 
