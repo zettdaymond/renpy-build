@@ -1,5 +1,5 @@
 colorama
-Cython
+Cython==0.29.20
 future
 ipython
 Jinja
@@ -9,7 +9,7 @@ Pygments
 python-dateutil
 pytz
 requests
-rsa
+# rsa
 six
 Sphinx
 sphinx-bootstrap-theme

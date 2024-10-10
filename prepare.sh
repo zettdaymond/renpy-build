@@ -20,8 +20,6 @@ zypper install libpng libpng-devel libjpeg libjpeg-devel libwebp libwebp-devel l
 zypper install fribidi fribidi-devel freetype freetype-devel harfbuzz harfbuzz-devel
 zypper install ffmpeg ffmpeg-devel
 
-pip install virtualenv
-
 zypper install python3-jinja2
 
 zypper install SDL2-devel SDL2_mixer-devel SDL2_image-devel SDL2_ttf-devel
@@ -38,7 +36,9 @@ python2 get-pip.py
 
 pip2 install virtualenv
 
-# Set up the environment variables.
+Set up the environment variables.
+
+pip2 install -r requirements.txt
 
 VENV="$ROOT/tmp/virtualenv.py2"
 
@@ -46,4 +46,3 @@ export RENPY_DEPS_INSTALL=/usr::/usr/lib/
 
 # . $BASE/nightly/git.sh
 . $BASE/nightly/python.sh
-

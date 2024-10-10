@@ -28,6 +28,7 @@ class Platform:
 Platform("linux", "x86_64")
 Platform("linux", "i686")
 Platform("linux", "armv7l")
+Platform("linux", "arm64")
 
 Platform("windows", "x86_64")
 Platform("windows", "i686")

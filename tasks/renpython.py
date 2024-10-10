@@ -40,6 +40,7 @@ def link_linux(c):
     c.run("""
     {{ CC }} {{ LDFLAGS }}
     -shared
+    -lstdc++
     -Wl,-Bsymbolic
 
     -o librenpython.so
@@ -58,7 +59,6 @@ def link_linux(c):
 
     -lSDL2_image
     -lSDL2
-    -lGL
     -ljpeg
     -lpng
     -lwebp
@@ -76,7 +76,7 @@ def link_linux(c):
           
     -ldbus-1
     -lwayland-client
-    -laudioresource    
+    -laudioresource
     """)
 
     c.run("""

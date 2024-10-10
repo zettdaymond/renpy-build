@@ -1,10 +1,10 @@
-from renpybuild.model import task
+from renpybuild.model import task, Context
 
-version = "3.3"
+version = "3.4.5"
 
 
 @task()
-def unpack(c):
+def unpack(c: Context):
     c.clean()
 
     c.var("version", version)
@@ -15,10 +15,10 @@ def unpack(c):
 
 
 @task()
-def build(c):
+def build(c: Context):
     c.var("version", version)
     c.chdir("libffi-{{version}}")
 
-    c.run("""./configure {{ ffi_cross_config }} --disable-shared --enable-portable-binary --prefix="{{ install }}" """)
+    c.run("""./configure  --disable-shared --enable-portable-binary --prefix="{{ install }}" """)
     c.run("""{{ make }}""")
     c.run("""make install """)

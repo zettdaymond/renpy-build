@@ -1,10 +1,11 @@
+from renpybuild.model import Context
 from renpybuild.model import task
 
 version = "4.3.1"
 
 
-@task()
-def unpack(c):
+@task(platforms="all")
+def unpack(c: Context):
     c.clean()
 
     c.var("version", version)
@@ -14,15 +15,16 @@ def unpack(c):
     c.chdir("ffmpeg-{{version}}")
 
     c.patch("ffmpeg-4.3.1-sse.diff")
+    c.patch("ffmpeg-4.3.1-ff_seek_frame_binary.diff")
 
 
 @task()
-def build(c):
+def build(c: Context):
 
-    if c.arch == "i686":
-        c.var("arch", "x86")
-    elif c.arch == "x86_64":
+    if c.arch == "x86_64":
         c.var("arch", "x86_64")
+    elif c.arch == "aarch64":
+        c.var("arch", "aarch64")
     elif c.arch == "sim-x86_64":
         c.var("arch", "x86_64")
     elif c.arch == "armv7l":
@@ -44,8 +46,6 @@ def build(c):
         c.var("os", "linux")
     elif (c.platform == "windows") and (c.arch == "x86_64"):
         c.var("os", "mingw64")
-    elif (c.platform == "windows") and (c.arch == "i686"):
-        c.var("os", "mingw32")
     elif c.platform == "mac":
         c.var("os", "darwin")
     elif c.platform == "ios":
@@ -92,8 +92,9 @@ def build(c):
         --enable-w32threads
 {% endif %}
 
-{% if c.platform == "ios" and c.arch.startswith("sim-") %}
-        --disable-asm
+{% if c.platform == "mac" or c.platform == "ios" %}
+        --disable-mmx
+        --disable-mmxext
 {% endif %}
 
         --enable-ffmpeg
@@ -121,6 +122,10 @@ def build(c):
         --enable-demuxer=mpegvideo
         --enable-demuxer=ogg
         --enable-demuxer=wav
+        --enable-demuxer=av1
+        --enable-demuxer=mp4  
+        --enable-demuxer=h264 
+        --enable-demuxer=aac
 
         --enable-decoder=flac
         --enable-decoder=mp2
@@ -146,6 +151,9 @@ def build(c):
         --enable-decoder=vp3
         --enable-decoder=vp8
         --enable-decoder=vp9
+        --enable-decoder=libaom_av1
+        --enable-decoder=h264
+        --enable-decoder=aac
 
         --enable-parser=mpegaudio
         --enable-parser=mpegvideo
@@ -153,6 +161,11 @@ def build(c):
         --enable-parser=vp3
         --enable-parser=vp8
         --enable-parser=vp9
+        --enable-parser=av1
+        --enable-parser=h264 
+        --enable-parser=aac
+          
+        --enable-bsfs
 
         --disable-iconv
         --disable-alsa
@@ -161,6 +174,100 @@ def build(c):
         --disable-sndio
         --disable-xlib
 
+
+        --disable-amf
+        --disable-audiotoolbox
+        --disable-cuda-llvm
+        --disable-d3d11va
+        --disable-dxva2
+        --disable-ffnvcodec
+        --disable-nvdec
+        --disable-nvenc
+        --disable-v4l2-m2m
+        --disable-vaapi
+        --disable-vdpau
+        --disable-videotoolbox
+    """)
+
+    c.run("""{{ make }} V=1""")
+    c.run("""make install""")
+
+
+@task(platforms="web")
+def build_web(c: Context):
+
+    c.var("version", version)
+    c.chdir("ffmpeg-{{version}}")
+
+    c.run("""
+    {{configure}}
+        --prefix="{{ install }}"
+
+        --arch=emscripten
+        --target-os=none
+
+        --cc="{{ CC }}"
+        --cxx="{{ CXX }}"
+        --ld="{{ CC }}"
+        --ar="{{ AR }}"
+        --ranlib="{{ RANLIB }}"
+        --strip="{{ STRIP }}"
+        --nm="{{ NM }}"
+
+        --extra-cflags="{{ CFLAGS }}"
+        --extra-cxxflags="{{ CFLAGS }}"
+        --extra-ldflags="{{ LDFLAGS }}"
+        --ranlib="{{ RANLIB }}"
+
+        --enable-pic
+        --enable-static
+        --disable-stripping
+
+        --disable-pthreads
+
+        --disable-all
+        --disable-everything
+
+        --enable-cross-compile
+        --enable-runtime-cpudetect
+
+        --enable-ffmpeg
+        --enable-ffplay
+        --disable-doc
+        --enable-avcodec
+        --enable-avformat
+        --enable-swresample
+        --enable-swscale
+        --enable-avfilter
+        --enable-avresample
+
+        --disable-bzlib
+
+        --enable-demuxer=au
+        --enable-demuxer=flac
+        --enable-demuxer=mp3
+        --enable-demuxer=ogg
+        --enable-demuxer=wav
+
+        --enable-decoder=flac
+        --enable-decoder=mp2
+        --enable-decoder=mp3
+        --enable-decoder=pcm_dvd
+        --enable-decoder=pcm_s16be
+        --enable-decoder=pcm_s16le
+        --enable-decoder=pcm_s8
+        --enable-decoder=pcm_u16be
+        --enable-decoder=pcm_u16le
+        --enable-decoder=pcm_u8
+        --enable-decoder=vorbis
+        --enable-decoder=opus
+
+        --disable-iconv
+        --disable-alsa
+        --disable-libxcb
+        --disable-lzma
+        --disable-sndio
+        --disable-xlib
 
         --disable-amf
         --disable-audiotoolbox

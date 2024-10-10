@@ -1,8 +1,12 @@
-from renpybuild.context import Context
-from renpybuild.task import task, annotator
+from renpybuild.model import Context
+from renpybuild.model import task, annotator
 import shutil
 import os
 
+
+@annotator
+def annotate(c):
+    c.include("{{ install }}/include")
 
 @task()
 def build(c: Context):

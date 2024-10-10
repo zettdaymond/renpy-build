@@ -9,6 +9,7 @@ fi
 . $VENV/bin/activate
 
 pip install -r $ROOT/requirements.txt
+#pip2 install -r $ROOT/requirements.txt
 
 pushd $BASE/pygame_sdl2
 python2 ./fix_virtualenv.py || true

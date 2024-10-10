@@ -1,22 +1,22 @@
-from renpybuild.context import Context
-from renpybuild.task import task, annotator
+from renpybuild.model import Context
+from renpybuild.model import task,annotator
 import shutil
 import os
 
 version = "2.0.30"
 
-
 @annotator
-def annotate(c: Context):
-    if c.name != "sdl2":
-        c.include("{{ install }}/include/SDL2")
+def annotate(c):
+    c.include("{{ install }}/include/SDL2")
 
+@task()
+def download(c: Context):
+    c.var("version", version)
 
-def download(c : Context):
     c.clean("{{ tmp }}/source/SDL2-{{version}}")
     c.chdir("{{ tmp }}/source")
 
-    c.run("git clone --branch auroraos-sdl2 https://github.com/zettdaymond/SDL")
+    c.run("git clone --branch auroraos-sdl2 --depth 1 https://github.com/zettdaymond/SDL SDL2-{{version}}")
 
 
 @task()
@@ -26,7 +26,7 @@ def build(c: Context):
     c.run("""mkdir -p SDL2-{{version}}-build""")
 
     previous_libdir = c.get_env("PKG_CONFIG_LIBDIR")
-    previous_pkg_conf = c.get_env("PKG_CONFIG_LIBDIR")
+    previous_pkg_conf = c.get_env("PKG_CONFIG")
     c.env("PKG_CONFIG_LIBDIR", "/usr/lib/pkgconfig:{{ PKG_CONFIG_LIBDIR }}")
     c.env("PKG_CONFIG", "pkg-config")
 

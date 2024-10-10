@@ -181,16 +181,11 @@ reprlib/
 socketserver/
 winreg/
 
-jnius/
-pyobjus/
-
 urllib3/
 idna/
 certifi/
 chardet/
 requests/
-
-iossupport.pyo
 
 six.pyo
 

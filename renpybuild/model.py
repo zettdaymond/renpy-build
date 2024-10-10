@@ -201,6 +201,23 @@ class Context:
 
         self.environ[variable] = self.expand(str(value))
 
+    def get(self, variable : str) -> str:
+        """
+        Returns the value of `variable`.
+        """
+
+        if variable in self.variables:
+            return self.variables[variable]
+
+        raise Exception(f"Unknown variable {variable!r}.")
+    
+    def get_env(self, variable : str):
+        """
+        Obtain environment variable `variable` with `value`.
+        """
+
+        return self.environ[variable]
+
     def var(self, variable, value, expand=True):
         """
         Adds a non-environment `variable` with `value`.

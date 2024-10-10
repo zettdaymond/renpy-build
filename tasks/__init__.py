@@ -2,11 +2,10 @@
 
 from . import cython
 
-from . import toolchain
-
 from . import zlib
 from . import bzip2
 from . import openssl
+
 
 from . import libffi
 
@@ -17,9 +16,9 @@ from . import libwebp
 from . import hostpython2
 from . import python2
 
-from . import pyjnius
-from . import pyobjus
-from . import iossupport
+# from . import pyjnius
+# from . import pyobjus
+# from . import iossupport
 
 from . import sdl2
 from . import sdl2_image
