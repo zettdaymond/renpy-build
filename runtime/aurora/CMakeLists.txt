@@ -32,7 +32,7 @@ add_library(${PROJECT_NAME} STATIC
 list(APPEND LIB_PUBLIC_HEADERS "include/AuroraIntegration.h")
 
 if(BUILD_PYTHON_MODULE)
-    find_package(Qt5 COMPONENTS Core Gui REQUIRED)
+    find_package(Qt5 COMPONENTS DBus REQUIRED)
     find_package(Python 2.7 COMPONENTS Development REQUIRED)
 
     target_sources(${PROJECT_NAME} 
@@ -43,7 +43,7 @@ if(BUILD_PYTHON_MODULE)
     target_link_libraries(${PROJECT_NAME} 
         PUBLIC 
             Qt5::Core 
-            Qt5::Gui 
+            Qt5::DBus 
             Python::Module
     )
     list(APPEND LIB_PUBLIC_HEADERS "include/PythonModule.h")

@@ -79,6 +79,7 @@ def link_linux(c):
     -laudioresource
     -lQt5Core
     -lQt5DBus
+          
     """)
 
     c.run("""
