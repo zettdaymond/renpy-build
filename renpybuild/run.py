@@ -23,9 +23,9 @@ def build_environment(c):
     c.env("PATH", "{{ host }}/bin:{{ PATH }}")
 
     if (c.platform == "linux") and (c.arch == "x86_64"):
-        c.var("host_platform", "x86_64-pc-linux-gnu")
+        c.var("host_platform", "x86_64-meego-linux-gnu")
     elif (c.platform == "linux") and (c.arch == "i686"):
-        c.var("host_platform", "i686-pc-linux-gnu")
+        c.var("host_platform", "i686-meego-linux-gnu")
     elif (c.platform == "linux") and (c.arch == "armv7l"):
         c.var("host_platform", "armv7hl-meego-linux-gnueabi")
     elif (c.platform == "windows") and (c.arch == "x86_64"):
@@ -115,21 +115,22 @@ def build_environment(c):
 
     elif (c.platform == "linux") and (c.arch == "x86_64"):
 
-        c.var("crossbin", "{{ cross }}/bin/{{ host_platform}}-")
+        c.var("crossbin", "/usr/bin/{{ host_platform }}-")
 
-        c.env("CC", "ccache {{ crossbin }}gcc -m64 -O3 -fPIC -pthread")
-        c.env("CXX", "ccache {{ crossbin }}g++ -m64 -O3 -fPIC -pthread")
-        c.env("CPP", "ccache {{ crossbin }}gcc -m64 -E ")
-        c.env("LD", "ccache ld -fPIC")
-        c.env("AR", "ccache gcc-ar")
-        c.env("RANLIB", "ccache gcc-ranlib")
-        c.env("STRIP", "ccache strip")
+        c.env("CC", "{{ crossbin }}gcc -m64 -O3 -fPIC -pthread")
+        c.env("CXX", "{{ crossbin }}g++ -m64 -O3 -fPIC -pthread")
+        c.env("CPP", "{{ crossbin }}gcc -E")
+        c.env("LD", "ld -fPIC")
+        c.env("AR", "gcc-ar")
+        c.env("AS", "nasm")
+        c.env("RANLIB", "gcc-ranlib")
+        c.env("STRIP", "strip")
         c.env("NM", "nm")
 
         c.env("LDFLAGS", "{{ LDFLAGS }} -Wl,-rpath-link")
         c.env("LDFLAGS", "{{ LDFLAGS }} -Wl,-rpath-link")
-        c.env("LDFLAGS", "{{ LDFLAGS }} -Wl,-rpath-link")
         c.env("LDFLAGS", "{{ LDFLAGS }} -L{{install}}/lib")
+        c.env("LDFLAGS", "{{ LDFLAGS }} -L{{install}}/lib64")
 
         c.env("PKG_CONFIG_LIBDIR", "{{ PKG_CONFIG_LIBDIR }}:/usr/lib/pkgconfig")
 

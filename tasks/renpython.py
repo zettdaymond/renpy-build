@@ -77,6 +77,8 @@ def link_linux(c):
     -ldbus-1
     -lwayland-client
     -laudioresource
+    -lQt5Core
+    -lQt5Gui
     """)
 
     c.run("""

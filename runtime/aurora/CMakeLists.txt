@@ -1,5 +1,7 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.12)
 project(auroraintegration CXX)
+
+option(BUILD_PYTHON_MODULE "Buld python module or not" ON)
 
 include(FindPkgConfig)
 
@@ -27,6 +29,26 @@ add_library(${PROJECT_NAME} STATIC
     include/AuroraIntegration.h # C API
 )
 
+list(APPEND LIB_PUBLIC_HEADERS "include/AuroraIntegration.h")
+
+if(BUILD_PYTHON_MODULE)
+    find_package(Qt5 COMPONENTS Core Gui REQUIRED)
+    find_package(Python 2.7 COMPONENTS Development REQUIRED)
+
+    target_sources(${PROJECT_NAME} 
+        PUBLIC 
+            src/PythonModule.cpp
+            include/PythonModule.h # C API
+    )
+    target_link_libraries(${PROJECT_NAME} 
+        PUBLIC 
+            Qt5::Core 
+            Qt5::Gui 
+            Python::Module
+    )
+    list(APPEND LIB_PUBLIC_HEADERS "include/PythonModule.h")
+endif()
+
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         include
@@ -44,9 +66,10 @@ target_link_libraries(${PROJECT_NAME}
         ${WAYLAND_LIBRARIES}
 )
 
+message(STATUS "LIB_PUBLIC_HEADERS : ${LIB_PUBLIC_HEADERS}")
 set_target_properties(${PROJECT_NAME} 
     PROPERTIES 
-        PUBLIC_HEADER "include/AuroraIntegration.h"
+        PUBLIC_HEADER "${LIB_PUBLIC_HEADERS}"
 )
 
 install(TARGETS ${PROJECT_NAME}

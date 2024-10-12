@@ -5,7 +5,8 @@
 #include "Python.h"
 
 #ifdef AURORAOS
-#   include "AuroraIntegration.h"    
+#   include "AuroraIntegration.h"
+#   include "PythonModule.h"
 #endif
 
 void init_librenpy(void);
@@ -299,6 +300,14 @@ int EXPORT renpython_main(int argc, char **argv) {
     Py_NoUserSiteDirectory = 1;
 
     init_librenpy();
+#ifdef AURORAOS
+    static struct _inittab inittab[] = {
+        { "auroraembed",  init_auroraembed },
+        { NULL, NULL },
+    };
+    PyImport_ExtendInittab(inittab);
+#endif
+
     int ret = Py_Main(argc, argv);
 
 #ifdef AURORAOS
@@ -314,6 +323,7 @@ int EXPORT launcher_main(int argc, char **argv) {
 
 #ifdef AURORAOS
     struct AuroraIntegrationHandle* handle = AuroraIntergrationStartup();
+
 #endif
 
     set_python_io_encoding();
@@ -374,6 +384,14 @@ int EXPORT launcher_main(int argc, char **argv) {
     Py_NoUserSiteDirectory = 1;
 
     init_librenpy();
+#ifdef AURORAOS
+    static struct _inittab inittab[] = {
+        { "auroraembed",  init_auroraembed },
+        { NULL, NULL },
+    };
+    PyImport_ExtendInittab(inittab);
+#endif
+
     int ret = Py_Main(argc + 1, new_argv);
 
 #ifdef AURORAOS
