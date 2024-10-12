@@ -8,15 +8,18 @@ fi
 
 . $VENV/bin/activate
 
-pip install -r $ROOT/requirements.txt
-#pip2 install -r $ROOT/requirements.txt
+# curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+# python2 get-pip.py
+
+# pip2 install -r $ROOT/requirements.txt
+python3 -m pip install -r $ROOT/requirements.txt
 
 pushd $BASE/pygame_sdl2
 python2 ./fix_virtualenv.py || true
 popd
 
 pushd $BASE/pygame_sdl2
-python setup.py install_headers
+python3 setup.py install_headers
 popd
 
 pushd $BASE/renpy

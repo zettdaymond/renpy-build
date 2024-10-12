@@ -7,7 +7,7 @@ ROOT=$(cd $(dirname $0); pwd)
 REFS=$ROOT
 BASE="$ROOT"
 
-zypper install python
+zypper install python ccache
 
 zypper install autoconf autoconf-archive automake make clang llvm
 zypper install python3-devel python3-pip
@@ -31,16 +31,13 @@ zypper install mesa-llvmpipe-libGLESv2-devel mesa-llvmpipe-libEGL-devel
 
 zypper install libaudioresource-devel glib2-devel dbus-devel 
 
-curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
-python2 get-pip.py
 
-pip2 install virtualenv
+# pip2 install virtualenv
+python3 -m pip install virtualenv
 
-Set up the environment variables.
+#Set up the environment variables.
 
-pip2 install -r requirements.txt
-
-VENV="$ROOT/tmp/virtualenv.py2"
+VENV="$ROOT/tmp/virtualenv.py3"
 
 export RENPY_DEPS_INSTALL=/usr::/usr/lib/
 
