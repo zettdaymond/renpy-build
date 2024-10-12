@@ -23,6 +23,7 @@ def build(c: Context):
         -S {{ runtime }}/aurora
         -B libauroraintegration-build
         -DCMAKE_INSTALL_PREFIX={{install}}
+        -DPython_ROOT_DIR={{install}}
         """)
 
     c.env("PKG_CONFIG", previous_pkg_conf)
