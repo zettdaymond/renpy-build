@@ -2,7 +2,8 @@
 
 from . import cython
 
-from . import zlib
+# from . import zlib
+from . import zlibng
 from . import bzip2
 from . import openssl
 

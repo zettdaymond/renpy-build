@@ -28,6 +28,8 @@ def build_environment(c):
         c.var("host_platform", "i686-meego-linux-gnu")
     elif (c.platform == "linux") and (c.arch == "armv7l"):
         c.var("host_platform", "armv7hl-meego-linux-gnueabi")
+    elif (c.platform == "linux") and (c.arch == "aarch64"):
+        c.var("host_platform", "aarch64-meego-linux-gnu")
     elif (c.platform == "windows") and (c.arch == "x86_64"):
         c.var("host_platform", "x86_64-w64-mingw32")
     elif (c.platform == "windows") and (c.arch == "i686"):
@@ -158,37 +160,39 @@ def build_environment(c):
 
         c.var("crossbin", "/usr/bin/{{ host_platform }}-")
 
-        c.env("CC", "ccache {{ crossbin }}gcc -fPIC -O3 -pthread")
-        c.env("CXX", "ccache {{ crossbin }}g++ -fPIC -O3 -pthread")
-        c.env("CPP", "ccache {{ crossbin }}gcc -E")
-        c.env("LD", "ccache ld -fPIC")
-        c.env("AR", "ccache gcc-ar")
-        c.env("RANLIB", "ccache gcc-ranlib")
-        c.env("STRIP", "ccache strip")
+        c.env("CC", "{{ crossbin }}gcc -fPIC -O3 -pthread")
+        c.env("CXX", "{{ crossbin }}g++ -fPIC -O3 -pthread")
+        c.env("CPP", "{{ crossbin }}gcc -E")
+        c.env("LD", "ld -fPIC")
+        c.env("AR", "gcc-ar")
+        c.env("RANLIB", "gcc-ranlib")
+        c.env("STRIP", "strip")
         c.env("NM", "nm")
 
         c.env("LDFLAGS", "{{ LDFLAGS }} -Wl,-rpath-link")
         c.env("LDFLAGS", "{{ LDFLAGS }} -Wl,-rpath-link")
         c.env("LDFLAGS", "{{ LDFLAGS }} -L{{install}}/lib ")
+        c.env("LDFLAGS", "{{ LDFLAGS }} -L{{install}}/lib64 ")
 
         c.env("PKG_CONFIG_LIBDIR", "{{ PKG_CONFIG_LIBDIR }}:/usr/lib/pkgconfig")
 
-    elif (c.platform == "linux") and (c.arch == "arm64"):
+    elif (c.platform == "linux") and (c.arch == "aarch64"):
 
         c.var("crossbin", "/usr/bin/{{ host_platform }}-")
 
-        c.env("CC", "ccache {{ crossbin }}gcc -fPIC -O3 -pthread")
-        c.env("CXX", "ccache {{ crossbin }}g++ -fPIC -O3 -pthread")
-        c.env("CPP", "ccache {{ crossbin }}gcc -E")
-        c.env("LD", "ccache ld -fPIC")
-        c.env("AR", "ccache gcc-ar")
-        c.env("RANLIB", "ccache gcc-ranlib")
-        c.env("STRIP", "ccache strip")
+        c.env("CC", "{{ crossbin }}gcc -fPIC -O3 -pthread")
+        c.env("CXX", "{{ crossbin }}g++ -fPIC -O3 -pthread")
+        c.env("CPP", "{{ crossbin }}gcc -E")
+        c.env("LD", "ld -fPIC")
+        c.env("AR", "gcc-ar")
+        c.env("RANLIB", "gcc-ranlib")
+        c.env("STRIP", "strip")
         c.env("NM", "nm")
 
         c.env("LDFLAGS", "{{ LDFLAGS }} -Wl,-rpath-link")
         c.env("LDFLAGS", "{{ LDFLAGS }} -Wl,-rpath-link")
         c.env("LDFLAGS", "{{ LDFLAGS }} -L{{install}}/lib ")
+        c.env("LDFLAGS", "{{ LDFLAGS }} -L{{install}}/lib64 ")
 
         c.env("PKG_CONFIG_LIBDIR", "{{ PKG_CONFIG_LIBDIR }}:/usr/lib/pkgconfig")
 

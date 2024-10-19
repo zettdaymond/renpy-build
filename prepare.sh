@@ -7,7 +7,7 @@ ROOT=$(cd $(dirname $0); pwd)
 REFS=$ROOT
 BASE="$ROOT"
 
-zypper install python ccache
+zypper install python ccache git
 
 zypper install autoconf autoconf-archive automake make clang llvm
 zypper install python3-devel python3-pip
@@ -37,9 +37,9 @@ python3 -m pip install virtualenv
 
 #Set up the environment variables.
 
-VENV="$ROOT/tmp/virtualenv.py3"
+# VENV="$ROOT/tmp/virtualenv.py3"
 
-export RENPY_DEPS_INSTALL=/usr::/usr/lib/
+# export RENPY_DEPS_INSTALL=/usr::/usr/lib/
 
-# . $BASE/nightly/git.sh
-. $BASE/nightly/python.sh
+# # . $BASE/nightly/git.sh
+# . $BASE/nightly/python.sh

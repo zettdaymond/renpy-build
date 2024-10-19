@@ -31,6 +31,7 @@ def build(c):
         -DCMAKE_INSTALL_PREFIX={{install}}
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         -DCMAKE_C_COMPILER_LAUNCHER=ccache
+        -DENABLE_SHARED=FALSE
         """)
 
     c.env("PKG_CONFIG", previous_pkg_conf)
